@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>你的网易云音乐年度报告</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'netease-red': '#FE1110',
+                        'netease-red-light': 'rgba(254, 17, 16, 0.1)',
+                        'netease-red-lighter': 'rgba(254, 17, 16, 0.05)',
+                    },
+                    fontFamily: {
+                        sans: ['"PingFang SC"', '"Microsoft YaHei"', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: '"PingFang SC"', '"Microsoft YaHei"', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        .gradient-circle {
+            background: radial-gradient(circle, rgba(254,17,16,0.15) 0%, rgba(254,17,16,0) 70%);
+        }
+        .music-note {
+            position: absolute;
+            opacity: 0.6;
+            z-index: 0;
+        }
+        .highlight-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .highlight-card:hover {
+            transform: translateY(-5px);
+            border-left-color: #FE1110;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .vinyl-record {
+            animation: spin 20s linear infinite;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .scroll-hint {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-15px);}
+            60% {transform: translateY(-7px);}
+        }
+        .song-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .song-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .song-list::-webkit-scrollbar-thumb {
+            background-color: #FE1110;
+            border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 30px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 10px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: #FE1110;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FE1110;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col justify-center items-center relative overflow-hidden px-6">
+        <div class="absolute w-full h-full gradient-circle opacity-70" style="width: 150%; height: 150%; left: -25%; top: -25%;"></div>
+        
+        <div class="relative z-10 text-center max-w-4xl" data-aos="fade-up">
+            <h1 class="text-6xl md:text-8xl font-bold mb-6">
+                <span class="text-netese-red">你的</span> 2024音乐年报
+            </h1>
+            <p class="text-xl md:text-2xl mb-12">
+                从 <span class="font-bold text-netese-red">忧郁诗人</span> 到 <span class="font-bold text-netese-red">多元探索家</span><br>
+                <span class="text-sm text-gray-500">YOUR MUSIC PERSONA 2020-2024</span>
+            </p>
+            
+            <div class="flex justify-center">
+                <button onclick="scrollToSection('music-taste')" class="bg-netese-red text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer">
+                    开始探索
+                </button>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 left-0 right-0 text-center scroll-hint">
+            <span class="material-icons text-netese-red text-4xl">expand_more</span>
+        </div>
+    </section>
+
+    <!-- Music Taste -->
+    <section id="music-taste" class="py-20 px-6 max-w-6xl mx-auto">
+        <div class="mb-20 text-center" data-aos="fade-up">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                <span class="text-netese-red">音乐</span> 品味演变
+            </h2>
+            <p class="text-gray-600 text-lg">YOUR MUSIC TASTE EVOLUTION</p>
+        </div>
+        
+        <div class="grid md:grid-cols-4 gap-8 mb-16">
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all" data-aos="fade-up">
+                <div class="text-netese-red text-5xl font-bold mb-4">2020</div>
+                <div class="text-xl font-bold mb-2">华语经典</div>
+                <div class="song-list text-sm text-gray-600 mb-4">
+                    <div class="py-1 border-b border-gray-100">太阳 - 坚果战斗机</div>
+                    <div class="py-1 border-b border-gray-100">大鱼 - 周深</div>
+                    <div class="py-1 border-b border-gray-100">不再犹豫 - Beyond</div>
+                    <div class="py-1">旅行的意义 - 陈绮贞</div>
+                </div>
+                <div class="h-2 bg-gray-200 mt-4 rounded-full overflow-hidden">
+                    <div class="h-full bg-netese-red rounded-full" style="width: 85%"></div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="100">
+                <div class="text-netese-red text-5xl font-bold mb-4">2021</div>
+                <div class="text-xl font-bold mb-2">欧美复古</div>
+                <div class="song-list text-sm text-gray-600 mb-4">
+                    <div class="py-1 border-b border-gray-100">Don't You Remember - Adele</div>
+                    <div class="py-1 border-b border-gray-100">处处吻 - 杨千嬅</div>
+                    <div class="py-1 border-b border-gray-100">One For Da Money - Overground</div>
+                    <div class="py-1">Bad Child - Tones and I</div>
+                </div>
+                <div class="h-2 bg-gray-200 mt-4 rounded-full overflow-hidden">
+                    <div class="h-full bg-netese-red rounded-full" style="width: 65%"></div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="200">
+                <div class="text-netese-red text-5xl font-bold mb-4">2022</div>
+                <div class="text-xl font-bold mb-2">电子/动漫</div>
+                <div class="song-list text-sm text-gray-600 mb-4">
+                    <div class="py-1 border-b border-gray-100">AXIA～ダイスキでダイキライ～ - ワルキューレ</div>
+                    <div class="py-1 border-b border-gray-100">给你一瓶魔法药水 - 告五人</div>
+                    <div class="py-1 border-b border-gray-100">Cyka Blyat - DJ Blyatman</div>
+                    <div class="py-1">AMG GTC - ZHANG JUN</div>
+                </div>
+                <div class="h-2 bg-gray-200 mt-4 rounded-full overflow-hidden">
+                    <div class="h-full bg-netese-red rounded-full" style="width: 75%"></div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="300">
+                <div class="text-netese-red text-5xl font-bold mb-4">2023</div>
+                <div class="text-xl font-bold mb-2">民谣国际化</div>
+                <div class="song-list text-sm text-gray-600 mb-4">
+                    <div class="py-1 border-b border-gray-100">我记得 - 赵雷</div>
+                    <div class="py-1 border-b border-gray-100">Beautiful - Akon</div>
+                    <div class="py-1 border-b border-gray-100">凄美地 - 郭顶</div>
+                    <div class="py-1">A Different Way - Max Oazo</div>
+                </div>
+                <div class="h-2 bg-gray-200 mt-4 rounded-full overflow-hidden">
+                    <div class="h-full bg-netese-red rounded-full" style="width: 90%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center" data-aos="zoom-in">
+            <div class="inline-block px-6 py-3 bg-netese-red-light rounded-full border border-netese-red/20">
+                <span class="text-netese-red font-bold text-lg">2022年「电子魂觉醒」</span>
+                <span class="text-gray-600 text-sm ml-2">深夜网易云算法暴走事件</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2024 Highlights -->
+    <section class="py-20 px-6 bg-gradient-to-b from-netese-red-lighter to-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-16 text-center" data-aos="fade-up">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-netese-red">2024</span> 年度歌单
+                </h2>
+                <p class="text-gray-600 text-lg">YOUR TOP TRACKS THIS YEAR</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white p-8 rounded-xl shadow-md" data-aos="fade-right">
+                    <h3 class="text-2xl font-bold mb-6 text-netese-red">最常播放</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                            <div class="text-netese-red font-bold mr-4">1</div>
+                            <div>
+                                <div class="font-bold">像我这样的人 - 毛不易</div>
+                                <div class="text-sm text-gray-500">播放次数: 87次</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                            <div class="text-netese-red font-bold mr-4">2</div>
+                            <div>
+                                <div class="font-bold">时光 - 许巍</div>
+                                <div class="text-sm text-gray-500">播放次数: 65次</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                            <div class="text-netese-red font-bold mr-4">3</div>
+                            <div>
+                                <div class="font-bold">落 (花开花落日升日没) - 唐伯虎Annie</div>
+                                <div class="text-sm text-gray-500">播放次数: 52次</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-xl shadow-md" data-aos="fade-left">
+                    <h3 class="text-2xl font-bold mb-6 text-netese-red">深夜最爱</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                            <div class="text-netese-red font-bold mr-4">1</div>
+                            <div>
+                                <div class="font-bold">皮囊 - 犬儒乐队</div>
+                                <div class="text-sm text-gray-500">92%在23:00-5:00播放</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                            <div class="text-netese-red font-bold mr-4">2</div>
+                            <div>
+                                <div class="font-bold">冷门 - Ice Paper</div>
+                                <div class="text-sm text-gray-500">85%在23:00-5:00播放</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                            <div class="text-netese-red font-bold mr-4">3</div>
+                            <div>
+                                <div class="font-bold">解惑 - 柏松</div>
+                                <div class="text-sm text-gray-500">78%在23:00-5:00播放</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center" data-aos="fade-up">
+                <div class="inline-block px-6 py-3 bg-netese-red-light rounded-full">
+                    <span class="text-netese-red font-bold">2024年你的深夜EMO指数: </span>
+                    <span class="text-netese-red font-bold text-xl">86%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Music Persona -->
+    <section class="py-20 px-6 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-20 text-center" data-aos="fade-up">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-netese-red">音乐</span> 人格画像
+                </h2>
+                <p class="text-gray-600 text-lg">YOUR MUSIC PERSONALITY</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center gap-12 mb-16">
+                <div class="md:w-1/2" data-aos="fade-right">
+                    <div class="bg-netese-red-light p-8 rounded-xl">
+                        <h3 class="text-2xl font-bold mb-6 text-netese-red">你的音乐DNA</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-bold">深沉思考者</span>
+                                    <span class="text-netese-red font-bold">70%</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-netese-red rounded-full" style="width: 70%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-bold">冒险玩家</span>
+                                    <span class="text-netese-red font-bold">30%</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-netese-red rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-bold">怀旧指数</span>
+                                    <span class="text-netese-red font-bold">45%</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-netese-red rounded-full" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-bold">探索精神</span>
+                                    <span class="text-netese-red font-bold">68%</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-netese-red rounded-full" style="width: 68%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2" data-aos="fade-left">
+                    <div class="bg-white p-8 rounded-xl shadow-md">
+                        <h3 class="text-2xl font-bold mb-6 text-netese-red">关键词</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-4 py-2 bg-netese-red-light text-netese-red rounded-full font-bold">哲思</span>
+                            <span class="px-4 py-2 bg-netese-red-light text-netese-red rounded-full font-bold">深夜</span>
+                            <span class="px-4 py-2 bg-netese-red-light text-netese-red rounded-full font-bold">孤独</span>
+                            <span class="px-4 py-2 bg-netese-red-light text-netese-red rounded-full font-bold">文艺</span>
+                            <span class="px-4 py-2 bg-netese-red-light text-netese-red rounded-full font-bold">探索</span>
+                            <span class="px-4 py-2 bg-netese-red-light text-netese-red rounded-full font-bold">独立</span>
+                            <span class="px-4 py-2 bg-netese-red-light text-netese-red rounded-full font-bold">多元</span>
+                            <span class="px-4 py-2 bg-netese-red-light text-netese-red rounded-full font-bold">小众</span>
+                        </div>
+                        
+                        <h3 class="text-2xl font-bold mt-8 mb-6 text-netese-red">音乐人格</h3>
+                        <div class="text-center p-6 bg-netese-red-light rounded-xl">
+                            <div class="text-netese-red text-3xl font-bold mb-2">「矛盾共生体」</div>
+                            <p class="text-gray-600">70%深沉思考者 + 30%冒险玩家</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center" data-aos="zoom-in">
+                <div class="inline-block px-8 py-4 bg-netese-red text-white rounded-full font-bold text-xl shadow-lg">
+                    你的音乐人格击败了92%的用户
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trend Analysis -->
+    <section class="py-20 px-6 bg-gray-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-20 text-center" data-aos="fade-up">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-netese-red">五年</span> 音乐趋势
+                </h2>
+                <p class="text-gray-600 text-lg">YOUR MUSIC TRENDS 2020-2024</p>
+            </div>
+            
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-6 text-netese-red" data-aos="fade-up">时间轴演变</h3>
+                <div class="timeline-item" data-aos="fade-up">
+                    <div class="timeline-dot">2020</div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h4 class="font-bold text-lg mb-2">华语经典时期</h4>
+                        <p class="text-gray-600 mb-2">主要收听: 周深, Beyond, 陈绮贞</p>
+                        <p class="text-sm text-gray-500">情绪特征: 怀旧, 深情</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="timeline-dot">2021</div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h4 class="font-bold text-lg mb-2">欧美复古风潮</h4>
+                        <p class="text-gray-600 mb-2">主要收听: Adele, 杨千嬅, Tones and I</p>
+                        <p class="text-sm text-gray-500">情绪特征: 多变, 国际化</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item" data-aos="fade-up" data-aos-delay="200">
+                    <div class="timeline-dot">2022</div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h4 class="font-bold text-lg mb-2">电子/动漫狂想</h4>
+                        <p class="text-gray-600 mb-2">主要收听: 告五人, ワルキューレ, DJ Blyatman</p>
+                        <p class="text-sm text-gray-500">情绪特征: 亢奋, 实验性</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item" data-aos="fade-up" data-aos-delay="300">
+                    <div class="timeline-dot">2023</div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h4 class="font-bold text-lg mb-2">民谣疗愈期</h4>
+                        <p class="text-gray-600 mb-2">主要收听: 赵雷, 郭顶, Akon</p>
+                        <p class="text-sm text-gray-500">情绪特征: 平静, 反思</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item" data-aos="fade-up" data-aos-delay="400">
+                    <div class="timeline-dot">2024</div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h4 class="font-bold text-lg mb-2">冷门文艺觉醒</h4>
+                        <p class="text-gray-600 mb-2">主要收听: 毛不易, 许巍, 犬儒乐队</p>
+                        <p class="text-sm text-gray-500">情绪特征: 深沉, 哲思</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div data-aos="fade-right">
+                    <h3 class="text-2xl font-bold mb-6 text-netese-red">多维度分析</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="mb-6">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-bold">语言分布</span>
+                                <span class="text-netese-red">2022年最多元</span>
+                            </div>
+                            <div class="h-40 relative">
+                                <!-- 语言分布图表 -->
+                                <div class="absolute bottom-0 left-0 w-16 bg-netese-red" style="height: 60%;" data-height="60%">
+                                    <div class="text-xs text-center text-white mt-1">华语</div>
+                                </div>
+                                <div class="absolute bottom-0 left-20 w-16 bg-netese-red" style="height: 40%;" data-height="40%">
+                                    <div class="text-xs text-center text-white mt-1">英语</div>
+                                </div>
+                                <div class="absolute bottom-0 left-40 w-16 bg-netese-red" style="height: 30%;" data-height="30%">
+                                    <div class="text-xs text-center text-white mt-1">日语</div>
+                                </div>
+                                <div class="absolute bottom-0 left-60 w-16 bg-netese-red" style="height: 20%;" data-height="20%">
+                                    <div class="text-xs text-center text-white mt-1">俄语</div>
+                                </div>
+                                <div class="absolute bottom-0 left-80 w-16 bg-netese-red" style="height: 10%;" data-height="10%">
+                                    <div class="text-xs text-center text-white mt-1">粤语</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-bold">情绪变化</span>
+                                <span class="text-netese-red">2024年最忧郁</span>
+                            </div>
+                            <div class="h-40 relative">
+                                <!-- 情绪变化图表 -->
+                                <div class="absolute bottom-0 left-0 w-12 bg-netese-red" style="height: 50%;" data-height="50%">
+                                    <div class="text-xs text-center text-white mt-1">2020</div>
+                                </div>
+                                <div class="absolute bottom-0 left-16 w-12 bg-netese-red" style="height: 40%;" data-height="40%">
+                                    <div class="text-xs text-center text-white mt-1">2021</div>
+                                </div>
+                                <div class="absolute bottom-0 left-32 w-12 bg-netese-red" style="height: 70%;" data-height="70%">
+                                    <div class="text-xs text-center text-white mt-1">2022</div>
+                                </div>
+                                <div class="absolute bottom-0 left-48 w-12 bg-netese-red" style="height: 60%;" data-height="60%">
+                                    <div class="text-xs text-center text-white mt-1">2023</div>
+                                </div>
+                                <div class="absolute bottom-0 left-64 w-12 bg-netese-red" style="height: 80%;" data-height="80%">
+                                    <div class="text-xs text-center text-white mt-1">2024</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div data-aos="fade-left" data-aos-delay="200">
+                    <h3 class="text-2xl font-bold mb-6 text-netese-red">趣味数据</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="space-y-6">
+                            <div>
+                                <div class="font-bold mb-2">年度最魔幻歌曲</div>
+                                <div class="flex items-center p-3 bg-netese-red-light rounded-lg">
+                                    <div class="text-netese-red font-bold mr-4">🔥</div>
+                                    <div>
+                                        <div class="font-bold">Cyka Blyat - DJ Blyatman</div>
+                                        <div class="text-sm text-gray-500">2022年俄式硬核暴击</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="font-bold mb-2">最忠诚歌手</div>
+                                <div class="flex items-center p-3 bg-netese-red-light rounded-lg">
+                                    <div class="text-netese-red font-bold mr-4">🎤</div>
+                                    <div>
+                                        <div class="font-bold">Max Oazo</div>
+                                        <div class="text-sm text-gray-500">2022 & 2023连续上榜</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="font-bold mb-2">深夜最爱歌手</div>
+                                <div class="flex items-center p-3 bg-netese-red-light rounded-lg">
+                                    <div class="text-netese-red font-bold mr-4">🌙</div>
+                                    <div>
+                                        <div class="font-bold">毛不易</div>
+                                        <div class="text-sm text-gray-500">92%播放发生在深夜</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="font-bold mb-2">最意外发现</div>
+                                <div class="flex items-center p-3 bg-netese-red-light rounded-lg">
+                                    <div class="text-netese-red font-bold mr-4">🎭</div>
+                                    <div>
+                                        <div class="font-bold">犬儒乐队</div>
+                                        <div class="text-sm text-gray-500">2024年新发现</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prediction -->
+    <section class="py-20 px-6 bg-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="mb-16" data-aos="fade-up">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-netese-red">2025</span> 音乐预测
+                </h2>
+                <p class="text-gray-600 text-lg">YOUR MUSIC FUTURE</p>
+            </div>
+            
+            <div class="mb-12" data-aos="zoom-in">
+                <div class="inline-block px-8 py-4 bg-netese-red-light rounded-full border border-netese-red/20">
+                    <span class="text-netese-red font-bold text-xl">可能继续深耕 独立民谣+实验电子</span>
+                    <span class="text-gray-600 text-sm ml-2">或突然跳入 K-POP深渊</span>
+                </div>
+            </div>
+            
+            <div class="bg-white p-8 rounded-xl shadow-md inline-block text-left" data-aos="fade-up">
+                <h3 class="text-2xl font-bold mb-6 text-netese-red">2025年潜力歌手</h3>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <div class="text-netese-red font-bold mr-4">1</div>
+                        <div>
+                            <div class="font-bold">草东没有派对</div>
+                            <div class="text-sm text-gray-500">摇滚/独立</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <div class="text-netese-red font-bold mr-4">2</div>
+                        <div>
+                            <div class="font-bold">YOASOBI</div>
+                            <div class="text-sm text-gray-500">日本流行</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <div class="text-netese-red font-bold mr-4">3</div>
+                        <div>
+                            <div class="font-bold">告五人</div>
+                            <div class="text-sm text-gray-500">独立摇滚</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <div class="text-netese-red font-bold mr-4">4</div>
+                        <div>
+                            <div class="font-bold">李荣浩</div>
+                            <div class="text-sm text-gray-500">华语流行</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16" data-aos="fade-up" data-aos-delay="200">
+                <div class="text-xl font-bold mb-6">彩蛋挑战</div>
+                <div class="text-3xl font-bold text-netese-red mb-8">明年能否把《最炫民族风》送进年度歌单？</div>
+                <div class="flex justify-center gap-4">
+                    <button class="px-6 py-3 bg-netese-red text-white rounded-full font-bold hover:bg-netese-red/90 transition-colors cursor-pointer">接受挑战</button>
+                    <button class="px-6 py-3 border-2 border-netese-red text-netese-red rounded-full font-bold hover:bg-netese-red-light transition-colors cursor-pointer">拒绝毒奶</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-16 px-6 bg-gray-100 text-center text-gray-600">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-4xl font-bold text-netese-red mb-6" data-aos="fade-up">网易云音乐</div>
+            <p class="mb-6" data-aos="fade-up" data-aos-delay="100">YOUR MUSIC PERSONA 2020-2024</p>
+            <div class="flex justify-center gap-6 mb-8" data-aos="fade-up" data-aos-delay="200">
+                <span class="material-icons text-netese-red cursor-pointer hover:text-netese-red/80">share</span>
+                <span class="material-icons text-netese-red cursor-pointer hover:text-netese-red/80">favorite</span>
+                <span class="material-icons text-netese-red cursor-pointer hover:text-netese-red/80">download</span>
+                <span class="material-icons text-netese-red cursor-pointer hover:text-netese-red/80">print</span>
+            </div>
+            <p class="text-sm" data-aos="fade-up" data-aos-delay="300">© 2024 NetEase Cloud Music. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            easing: 'ease-out-quart'
+        });
+
+        // Smooth scroll function
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Animate chart bars
+        document.addEventListener('DOMContentLoaded', function() {
+            const chartBars = document.querySelectorAll('[data-height]');
+            const chartObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        chartBars.forEach(bar => {
+                            bar.style.height = bar.getAttribute('data-height');
+                        });
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            if (chartBars.length > 0) {
+                chartObserver.observe(document.querySelector('.h-40.relative'));
+            }
+        });
+    </script>
+</body>
+</html>
