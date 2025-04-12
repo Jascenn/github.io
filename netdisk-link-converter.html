@@ -156,6 +156,101 @@
             opacity: 1;
         }
 
+        /* 使用说明模态框样式 */
+        .instruction-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 70%;
+            overflow-y: auto;
+            text-align: center;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover {
+            color: black;
+        }
+
+        .instruction-section {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .instruction-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .instruction-section p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .supported-networks .network-logos {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .supported-networks .network-logos span {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .contact-info {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+
         @media screen and (max-width: 375px) {
             .container {
                 padding: 10px;
@@ -230,6 +325,55 @@
     </div>
 
     <div id="toast"></div>
+
+    <!-- 使用说明模态框 -->
+    <div id="instructionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>📱 使用指南</h2>
+            
+            <div class="instruction-section">
+                <h3>1. 复制网盘分享内容</h3>
+                <p>直接将网盘分享的完整文案粘贴到输入框</p>
+            </div>
+
+            <div class="instruction-section">
+                <h3>2. 自动转换</h3>
+                <p>系统会自动识别链接、标题和提取码</p>
+            </div>
+
+            <div class="instruction-section">
+                <h3>3. 生成链接</h3>
+                <p>点击"生成公众号链接"按钮，一键复制</p>
+            </div>
+
+            <div class="instruction-section">
+                <h3>4. 公众号设置</h3>
+                <p>直接在公众号后台粘贴生成的链接即可</p>
+            </div>
+
+            <div class="instruction-section supported-networks">
+                <h3>支持网盘</h3>
+                <div class="network-logos">
+                    <span>百度</span>
+                    <span>夸克</span>
+                    <span>阿里</span>
+                    <span>迅雷</span>
+                    <span>蓝奏</span>
+                </div>
+            </div>
+
+            <div class="contact-info">
+                <p>制作人：凌一</p>
+                <p>联系方式：Help000000（微信）</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 使用说明按钮 -->
+    <button id="instructionBtn" class="instruction-btn">
+        <i data-lucide="help-circle"></i>
+    </button>
 
     <script>
         // 初始化图标
@@ -415,6 +559,25 @@
 
             showToast('已复制公众号格式链接');
         }
+
+        // 使用说明模态框逻辑
+        const instructionBtn = document.getElementById('instructionBtn');
+        const instructionModal = document.getElementById('instructionModal');
+        const closeButton = document.querySelector('.close-button');
+
+        instructionBtn.addEventListener('click', () => {
+            instructionModal.style.display = 'block';
+        });
+
+        closeButton.addEventListener('click', () => {
+            instructionModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === instructionModal) {
+                instructionModal.style.display = 'none';
+            }
+        });
     </script>
 <script>window.parent.postMessage({ action: "ready" }, "*"); 
  
