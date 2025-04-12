@@ -1,0 +1,444 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>网盘链接转换工具</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --primary-color: #053063;
+            --background-color: #f4f6f9;
+            --text-color: #333;
+            --border-color: #e0e4ea;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 450px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(5, 48, 99, 0.1);
+            padding: 20px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+        }
+
+        .input-field {
+            flex-grow: 1;
+            height: 44px;
+            padding: 0 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .copy-btn {
+            margin-left: 8px;
+            padding: 0 12px;
+            min-height: 44px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-button {
+            width: 100%;
+            height: 44px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-area {
+            margin-bottom: 15px;
+        }
+
+        textarea#sourceInput {
+            width: 100%; 
+            min-height: 100px; 
+            resize: vertical; 
+            padding: 10px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .network-type {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .network-type svg, .form-label svg, .copy-btn svg, .action-button svg {
+            margin-right: 8px;
+        }
+
+        #toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        #toast.show {
+            opacity: 1;
+        }
+
+        @media screen and (max-width: 375px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .form-label {
+                font-size: 14px;
+            }
+            
+            .input-field {
+                font-size: 14px;
+            }
+        }
+
+        @media (pointer: coarse) {
+            .copy-btn, .action-button {
+                min-height: 44px;
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="network-type" id="networkTypeArea">
+            <i data-lucide="cloud"></i>等待识别网盘类型...
+        </div>
+
+        <div class="input-area">
+            <textarea id="sourceInput" placeholder="粘贴网盘分享内容，如：我用夸克网盘分享了「文件名」，链接：https://... 提取码：xxxx"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                <i data-lucide="file-text"></i>标题
+            </label>
+            <div class="input-wrapper">
+                <input type="text" id="titleInput" class="input-field" placeholder="请输入文件标题">
+                <button class="copy-btn" onclick="copyText('titleInput')">
+                    <i data-lucide="copy"></i>复制
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                <i data-lucide="link"></i>链接
+            </label>
+            <div class="input-wrapper">
+                <input type="text" id="linkInput" class="input-field" placeholder="请输入网盘链接">
+                <button class="copy-btn" onclick="copyText('linkInput')">
+                    <i data-lucide="copy"></i>复制
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                <i data-lucide="key"></i>提取码
+            </label>
+            <div class="input-wrapper">
+                <input type="text" id="codeInput" class="input-field" placeholder="请输入提取码">
+                <button class="copy-btn" onclick="copyText('codeInput')">
+                    <i data-lucide="copy"></i>复制
+                </button>
+            </div>
+        </div>
+
+        <button class="action-button" onclick="generateLink()">
+            <i data-lucide="share-2"></i>生成公众号链接
+        </button>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+
+        // 禁用双指缩放
+        document.addEventListener('touchmove', function (event) {
+            if (event.scale !== 1) { 
+                event.preventDefault(); 
+            }
+        }, { passive: false });
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function copyText(id) {
+            const input = document.getElementById(id);
+            
+            // 移动端兼容
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(input.value).then(() => {
+                    showToast('复制成功');
+                });
+            } else {
+                // 兼容旧浏览器
+                input.select();
+                input.setSelectionRange(0, 99999); // 移动端兼容
+                document.execCommand('copy');
+                showToast('复制成功');
+            }
+        }
+
+        const networkTypes = {
+            'quark': {
+                name: '夸克网盘',
+                titleRegex: [/「(.+?)」/, /分享文件：(.+?)\s/],
+                linkRegex: /(https:\/\/pan\.quark\.cn\/s\/[a-zA-Z0-9]+)/,
+                codeRegex: /提取码[：:]\s*([a-zA-Z0-9]+)/
+            },
+            'baidu': {
+                name: '百度网盘',
+                titleRegex: [
+                    /通过网盘分享的文件[：:]\s*(.+?)\s/,
+                    /分享文件[：:]\s*(.+?)\s/,
+                    /链接[:：]\s*https:\/\/pan\.baidu\.com\/s\/[^ ]+ 提取码[:：] [^ ]+ 文件名[：:]\s*(.+)/,
+                    /「(.+?)」/,
+                    /标题[：:]\s*(.+?)\s/
+                ],
+                linkRegex: /(https?:\/\/pan\.baidu\.com\/s\/[a-zA-Z0-9_-]+)/,
+                codeRegex: /提取码[：:]\s*([a-zA-Z0-9]+)/
+            },
+            'aliyun': {
+                name: '阿里云盘',
+                titleRegex: [/「(.+?)」/, /分享文件：(.+?)\s/],
+                linkRegex: /(https:\/\/www\.alipan\.com\/s\/[a-zA-Z0-9]+)/,
+                codeRegex: /提取码[：:]\s*([a-zA-Z0-9]+)/
+            },
+            'thunder': {
+                name: '迅雷云盘',
+                titleRegex: [/「(.+?)」/, /分享文件：(.+?)\s/],
+                linkRegex: /(https:\/\/pan\.xunlei\.com\/s\/[a-zA-Z0-9]+)/,
+                codeRegex: /提取码[：:]\s*([a-zA-Z0-9]+)/
+            },
+            'lanzhou': {
+                name: '蓝奏云',
+                titleRegex: [/「(.+?)」/, /分享文件：(.+?)\s/],
+                linkRegex: /(https:\/\/[a-zA-Z0-9]+\.lanzouf?\.(com|net)\/[a-zA-Z0-9]+)/,
+                codeRegex: /提取码[：:]\s*([a-zA-Z0-9]+)/
+            },
+            '115': {
+                name: '115网盘',
+                titleRegex: [/「(.+?)」/, /分享文件：(.+?)\s/],
+                linkRegex: /(https:\/\/115\.com\/s\/[a-zA-Z0-9]+)/,
+                codeRegex: /提取码[：:]\s*([a-zA-Z0-9]+)/
+            },
+            'google': {
+                name: 'Google Drive',
+                titleRegex: [/「(.+?)」/, /分享文件：(.+?)\s/],
+                linkRegex: /(https:\/\/drive\.google\.com\/[a-zA-Z0-9/]+)/,
+                codeRegex: /访问密码[：:]\s*([a-zA-Z0-9]+)/
+            },
+            'onedrive': {
+                name: 'OneDrive',
+                titleRegex: [/「(.+?)」/, /分享文件：(.+?)\s/],
+                linkRegex: /(https:\/\/[a-zA-Z0-9-]+\.sharepoint\.com\/[a-zA-Z0-9/]+)/,
+                codeRegex: /访问密码[：:]\s*([a-zA-Z0-9]+)/
+            },
+            'mega': {
+                name: 'MEGA',
+                titleRegex: [/「(.+?)」/, /分享文件：(.+?)\s/],
+                linkRegex: /(https:\/\/mega\.nz\/[a-zA-Z0-9#]+)/,
+                codeRegex: /访问密码[：:]\s*([a-zA-Z0-9]+)/
+            }
+        };
+
+        const sourceInput = document.getElementById('sourceInput');
+        const networkTypeArea = document.getElementById('networkTypeArea');
+        const titleInput = document.getElementById('titleInput');
+        const linkInput = document.getElementById('linkInput');
+        const codeInput = document.getElementById('codeInput');
+
+        sourceInput.addEventListener('input', function() {
+            const text = this.value;
+            let detected = false;
+
+            for (const [type, config] of Object.entries(networkTypes)) {
+                const linkMatch = text.match(config.linkRegex);
+                
+                if (linkMatch) {
+                    detected = true;
+                    networkTypeArea.innerHTML = `<i data-lucide="cloud"></i>${config.name}`;
+                    lucide.createIcons(); // 重新渲染图标
+                    
+                    const link = linkMatch[1];
+                    linkInput.value = link;
+
+                    // 多重标题匹配
+                    let titleMatch = null;
+                    if (Array.isArray(config.titleRegex)) {
+                        for (const regex of config.titleRegex) {
+                            titleMatch = text.match(regex);
+                            if (titleMatch) break;
+                        }
+                    } else {
+                        titleMatch = text.match(config.titleRegex);
+                    }
+
+                    titleInput.value = titleMatch ? titleMatch[1] : '';
+
+                    const codeMatch = text.match(config.codeRegex);
+                    codeInput.value = codeMatch ? codeMatch[1] : '';
+
+                    break;
+                }
+            }
+
+            if (!detected) {
+                networkTypeArea.innerHTML = '<i data-lucide="help-circle"></i>未识别网盘类型';
+                lucide.createIcons(); // 重新渲染图标
+                titleInput.value = '';
+                linkInput.value = '';
+                codeInput.value = '';
+            }
+        });
+
+        function generateLink() {
+            const title = titleInput.value;
+            const link = linkInput.value;
+            const code = codeInput.value;
+
+            if (!link) {
+                showToast('请先输入并识别网盘分享内容');
+                return;
+            }
+
+            let resultText = `<a href="${link}">`;
+            
+            if (title) {
+                resultText += `点击此处获取「${title}」资料包`;
+            } else {
+                resultText += '点击此处获取资料包';
+            }
+
+            if (code) {
+                resultText += ` 提取码：${code}`;
+            }
+
+            resultText += '</a>';
+            
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = resultText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            showToast('已复制公众号格式链接');
+        }
+    </script>
+<script>window.parent.postMessage({ action: "ready" }, "*"); 
+ 
+window.console = new Proxy(console, {
+  get(target, prop) {
+    if (['log', 'warn', 'error'].includes(prop)) {
+      return new Proxy(target[prop], {
+        apply(fn, thisArg, args) {
+          fn.apply(thisArg, args);
+          window.parent.postMessage({ action: 'console', 
+            type: prop, 
+            args: args.map((arg) => {
+              try {
+                return JSON.stringify(arg).replace(/^["']|["']$/g, '');
+              } catch (e) {
+                return arg;
+              }
+            }) 
+          }, '*');
+        }
+      });
+    }
+    return target[prop];
+  }
+});
+</script></body>
+</html>
