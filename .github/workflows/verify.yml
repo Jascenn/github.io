@@ -1,0 +1,78 @@
+name: Verify
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check static pages and local links
+        shell: python
+        run: |
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import unquote, urlsplit
+
+          root = Path.cwd()
+          html_files = sorted(root.rglob("*.html"))
+          errors = []
+
+          if not html_files:
+              errors.append("No HTML files found")
+
+          class LinkParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.references = []
+
+              def handle_starttag(self, tag, attrs):
+                  for name, value in attrs:
+                      if name in {"href", "src"} and value:
+                          self.references.append(value)
+
+          for html_file in html_files:
+              relative = html_file.relative_to(root)
+              content = html_file.read_text(encoding="utf-8")
+              lowered = content.lower()
+
+              for required in ("<!doctype html>", "<html", "<head", "<title", "<body"):
+                  if required not in lowered:
+                      errors.append(f"{relative}: missing {required}")
+
+              parser = LinkParser()
+              parser.feed(content)
+
+              for reference in parser.references:
+                  parsed = urlsplit(reference)
+                  if parsed.scheme or parsed.netloc or reference.startswith(("#", "/", "//")):
+                      continue
+                  if not parsed.path:
+                      continue
+
+                  target = (html_file.parent / unquote(parsed.path)).resolve()
+                  try:
+                      target.relative_to(root.resolve())
+                  except ValueError:
+                      errors.append(f"{relative}: link escapes repository: {reference}")
+                      continue
+
+                  if not target.exists():
+                      errors.append(f"{relative}: missing local target: {reference}")
+
+          if errors:
+              raise SystemExit("\n".join(errors))
+
+          print(f"Checked {len(html_files)} HTML files and all local links.")
+
+      - name: Check whitespace
+        run: git diff --check
